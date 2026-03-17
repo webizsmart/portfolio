@@ -1,83 +1,70 @@
 /**
- * 초정밀 디버깅 모드가 포함된 포트폴리오 스크립트
+ * GitHub Commit aeb0198 로직 반영 및 리스트 최적화
  */
 (function() {
     const GITHUB_USERNAME = 'webizsmart'; 
+    
+    // 최종 제외 항목: mailbox, carreer, snol, realestate, vibe
     const REPO_NAMES = [
-        'mailbox', 'carreer', 'sapeong', 'tagflow', 'kch2', 'kangchon', 'snol', 'meloapp', 
-        'meloditon', 'realestate', 'guesthouse', 'aurora', 'frs_co', 'wooriai', 'metome', 
+        'sapeong', 'tagflow', 'kch2', 'kangchon', 'meloapp', 
+        'meloditon', 'guesthouse', 'aurora', 'frs_co', 'wooriai', 'metome', 
         'k-seodang', 'wooriai2', 'aminofit', 'hfs', 'ai_it', '1000cha', 'construct', 
-        'dagency', 'syhcoach', 'livewithesg', 'kdrama', 'vibe'
+        'dagency', 'syhcoach', 'livewithesg', 'kdrama'
+    ];
+
+    const GRADIENTS = [
+        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        'linear-gradient(135deg, #2af598 0%, #009efd 100%)',
+        'linear-gradient(135deg, #ff0844 0%, #ffb199 100%)',
+        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+        'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
     ];
 
     function createProjectCard(repoName, index) {
-        try {
-            const card = document.createElement('div');
-            card.className = 'project-card';
-            card.style.animationDelay = `${index * 0.05}s`;
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.style.animationDelay = `${index * 0.05}s`;
 
-            const projectUrl = `https://webizsmart.github.io/${repoName.toLowerCase()}`;
-            const thumbnailUrl = `https://opengraph.githubassets.com/1/${GITHUB_USERNAME}/${repoName.toLowerCase()}`;
+        const projectUrl = `https://${GITHUB_USERNAME}.github.io/${repoName.toLowerCase()}`;
+        const thumbnailUrl = `https://opengraph.githubassets.com/1/${GITHUB_USERNAME}/${repoName.toLowerCase()}`;
+        const initial = repoName.charAt(0).toUpperCase();
+        const gradient = GRADIENTS[index % GRADIENTS.length];
 
-            card.innerHTML = `
-                <a href="${projectUrl}" target="_blank" class="card-link">
-                    <div class="card-image-box">
-                        <img src="${thumbnailUrl}" alt="${repoName}" loading="lazy" 
-                             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop'">
-                        <div class="card-overlay">
-                            <span class="view-btn">방문하기 <i class="fas fa-external-link-alt"></i></span>
-                        </div>
+        card.innerHTML = `
+            <a href="${projectUrl}" target="_blank" class="card-link">
+                <div class="card-image-box">
+                    <div class="thumb-bg" style="background: ${gradient}">
+                        <div class="initial">${initial}</div>
                     </div>
-                    <div class="card-content">
-                        <h3>${repoName.toUpperCase()}</h3>
-                        <p class="repo-link">${GITHUB_USERNAME} / ${repoName}</p>
+                    <img src="${thumbnailUrl}" alt="${repoName}" 
+                         onload="this.classList.add('loaded')" 
+                         onerror="this.style.display='none'">
+                    <div class="view-btn">
+                        VIEW <i class="fas fa-arrow-right"></i>
                     </div>
-                </a>
-            `;
-            return card;
-        } catch (e) {
-            console.error('Card creation failed for:', repoName, e);
-            return null;
-        }
+                </div>
+                <div class="card-content">
+                    <h3>${repoName.toUpperCase()}</h3>
+                    <p>${GITHUB_USERNAME} / ${repoName}</p>
+                </div>
+            </a>
+        `;
+        return card;
     }
 
     function render() {
-        console.log('Starting render process...');
         const grid = document.getElementById('project-grid');
-        
-        if (!grid) {
-            alert('에러: "project-grid" 요소를 찾을 수 없습니다. index.html 파일이 정상인지 확인해주세요.');
-            return;
-        }
+        if (!grid) return;
 
-        grid.innerHTML = ''; // 로딩 스피너 제거
+        grid.innerHTML = ''; 
 
-        let count = 0;
         REPO_NAMES.forEach((repo, index) => {
             const card = createProjectCard(repo, index);
-            if (card) {
-                grid.appendChild(card);
-                count++;
-            }
+            grid.appendChild(card);
         });
-
-        console.log(`Rendered ${count} out of ${REPO_NAMES.length} projects.`);
-        
-        if (count === 0) {
-            grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 2rem;">표시할 프로젝트가 없습니다.</p>';
-        }
     }
 
-    // 초기화 실행
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', render);
-    } else {
-        render();
-    }
-
-    // 전역 에러 캡처 (콘솔 에러를 화면에 경고창으로 띄워 확인)
-    window.onerror = function(msg, url, line) {
-        console.log('Caught global error:', msg, 'at line:', line);
-        return false;
-    };
+    window.addEventListener('load', render);
 })();
