@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webizsmart Portfolio</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #6366f1;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --card-radius: 12px;
+        }
+
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            background: white;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { 
+            font-size: 1.25rem; 
+            font-weight: 800; 
+            font-family: 'Outfit'; 
+            color: var(--primary); 
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .grid-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(0,0,0,0.1);
+        }
+
+        /* 썸네일 영역 스타일 (제공된 이미지 스타일 반영) */
+        .card-thumbnail {
+            height: 200px;
+            width: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .card-initial {
+            font-family: 'Inter', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            color: white;
+            user-select: none;
+        }
+
+        /* 우측 하단 VIEW 버튼 스타일 */
+        .view-btn {
+            position: absolute;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            background: #e0e7ff;
+            color: #312e81;
+            padding: 0.6rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .project-card:hover .view-btn {
+            transform: scale(1.05);
+        }
+
+        /* 텍스트 영역 스타일 */
+        .card-content { 
+            padding: 1.5rem; 
+            background: white;
+        }
+
+        .card-content h3 { 
+            margin: 0; 
+            font-size: 1.2rem; 
+            font-weight: 800; 
+            color: #0f172a; 
+            letter-spacing: -0.01em; 
+        }
+
+        .card-content p { 
+            margin: 0.4rem 0 0; 
+            font-size: 0.95rem; 
+            color: #64748b; 
+            font-weight: 400;
+        }
+
+        footer {
+            padding: 4rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">WEBIZSMART</a>
+        <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted);">Repos Portfolio</div>
+    </header>
+
+    <main>
+        <div class="grid-container" id="project-grid">
+            <!-- JS가 리스트를 생성합니다 -->
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2024 Webizsmart. All rights reserved.
+    </footer>
+
+    <script>
+        const GITHUB_USER = 'webizsmart';
+        const REPOS = ['mailbox', 'sapeong', 'tagflow', 'kch2', 'kangchon', 'meloapp', 'meloditon', 'guesthouse', 'aurora', 'frs_co', 'wooriai', 'metome', 'k-seodang', 'wooriai2', 'aminofit', 'hfs', 'ai_it', '1000cha', 'construct', 'dagency', 'syhcoach', 'livewithesg', 'kdrama'];
+        
+        // 제공된 이미지의 느낌을 살린 세련된 컬러 팔레트
+        const COLORS = [
+            '#6366f1', // Indigo (레퍼런스 이미지와 유사)
+            '#8b5cf6', // Violet
+            '#4f46e5', // Royal Blue
+            '#4338ca', // Darker Blue
+            '#5850ec', // Modern Blue
+            '#7c3aed', // Purple
+            '#2563eb'  // Blue
+        ];
+
+        function render() {
+            const grid = document.getElementById('project-grid');
+            if (!grid) return;
+
+            let html = '';
+            REPOS.forEach((repo, i) => {
+                const url = `https://${GITHUB_USER}.github.io/${repo.toLowerCase()}`;
+                const initial = repo.charAt(0).toUpperCase();
+                const color = COLORS[i % COLORS.length];
+
+                html += `
+                    <a href="${url}" target="_blank" class="project-card">
+                        <div class="card-thumbnail" style="background-color: ${color}">
+                            <div class="card-initial">${initial}</div>
+                            <div class="view-btn">
+                                VIEW <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <h3>${repo.toUpperCase()}</h3>
+                            <p>${GITHUB_USER} / ${repo}</p>
+                        </div>
+                    </a>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        window.addEventListener('load', render);
+    </script>
+</body>
+</html>
