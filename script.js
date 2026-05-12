@@ -44,4 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
             blob.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
         });
     });
+
+    // Make entire project cards clickable
+    document.querySelectorAll('.project-card').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', (e) => {
+            // Prevent double opening if the user specifically clicked the 'a' tag
+            if (!e.target.closest('a')) {
+                const link = card.querySelector('a.project-link');
+                if (link && link.href) {
+                    window.open(link.href, '_blank');
+                }
+            }
+        });
+    });
 });
